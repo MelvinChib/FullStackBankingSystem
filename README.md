@@ -55,6 +55,19 @@ A comprehensive full-stack banking application featuring a **React frontend** an
 
 ## 🏗️ **Architecture Overview**
 
+Key backend behavior for onboarding (test profile with H2):
+- When a user registers, the system:
+  - Validates credentials, stores user in H2 with hashed password (BCrypt)
+  - Generates an account number (prefix MBZ) and creates a default CHECKING account
+  - Sends an email with the account number and sign-in steps
+
+Statement exports:
+- GET /accounts/{id}/statement/pdf|csv|text?fromDate=&toDate=
+- Requires Authorization Bearer token
+
+Customer Support:
+- POST /customer-support/chat accepts a message and returns an answer; uses OpenAI if configured, otherwise a fallback.
+
 ```
 MelvinBank Zambia App/
 ├── 📁 backend/                 # Spring Boot Backend
@@ -83,12 +96,31 @@ MelvinBank Zambia App/
 └── 📖 README.md               # This file
 ```
 
+## 🚀 New Features (2025-09)
+
+This release includes the following end-user features and developer integrations:
+
+- Statement downloads (PDF, CSV, Text) per account with date range filters
+- Customer support chat (AI-backed, with graceful fallback if no API key)
+- Google Analytics integration via Vite env variable
+- User registration with onboarding flow:
+  - Store users in H2 (test profile) with JWT auth and roles
+  - Automatically create a default account and generate an account number
+  - Send onboarding email with account number and sign-in instructions (no plaintext password)
+- Ready-to-run locally and with Docker
+
+Configuration quick refs:
+- VITE_API_URL: Frontend base API, e.g. http://localhost:8080/api/v1
+- VITE_GA_MEASUREMENT_ID: Google Analytics G-XXXX value (optional)
+- DB_USERNAME/DB_PASSWORD: Backend db creds (dev/prod profiles), H2 used in test
+- OPENAI_API_KEY: Optional key for AI customer support
+
 ## 🚀 **Quick Start Guide**
 
 ### **Prerequisites**
 - ☕ **Java 17** or higher
 - 🔧 **Maven 3.8+**
-- 🐘 **PostgreSQL 12+** (or H2 for testing)
+- 🐘 **PostgreSQL 12+** (or H2 for testing — default when using start-app.sh)
 - 🟢 **Node.js 16+** and **npm/yarn**
 - 📝 **Git**
 
@@ -96,6 +128,29 @@ MelvinBank Zambia App/
 ```bash
 git clone <repository-url>
 cd "MelvinBank Zambia App"
+```
+
+## ☁️ Push to GitHub (secure)
+
+1) Create a new GitHub repo (empty) in your account.
+2) Export a Personal Access Token (PAT) with repo scope securely:
+
+- macOS/Linux (bash/zsh):
+  export GH_PAT={{GITHUB_PAT}}
+
+3) Add remote and push without exposing the token in your history:
+
+```bash
+git remote add origin https://github.com/<your-username>/<your-repo>.git
+# Use a credential helper or the gh CLI; or when prompted, paste $GH_PAT (not the literal value)
+git push -u origin master
+```
+
+Tip: If you have the GitHub CLI (gh), you can run:
+
+```bash
+gh auth login
+# follow the prompts
 ```
 
 ### **2. Setup Backend**
@@ -136,20 +191,34 @@ cd frontend
 npm install
 
 # Set environment variables
-echo "REACT_APP_API_URL=http://localhost:8080/api/v1" > .env
+cat > .env << 'EOF'
+VITE_API_URL=http://localhost:8080/api/v1
+# Optional: enable Google Analytics
+# VITE_GA_MEASUREMENT_ID=G-XXXXXXX
+EOF
 
 # Start development server
 npm start
 ```
 
-**Frontend will be available at:** `http://localhost:3000`
+**Frontend will be available at:** `http://localhost:5173`
 
-### **4. Access the Application**
+### **4. Google Analytics (optional)**
 
-- 🌐 **Frontend**: http://localhost:3000
+Set the measurement ID for the frontend build:
+
+- Dev: add to frontend/.env
+  - VITE_GA_MEASUREMENT_ID=G-XXXXXXX
+- Docker build (docker-compose): set build arg or env and rebuild
+
+The frontend will automatically load gtag only when this variable is set.
+
+### **5. Access the Application**
+
+- 🌐 **Frontend**: http://localhost:5173
 - 🔧 **Backend API**: http://localhost:8080/api/v1
 - 📚 **API Documentation**: http://localhost:8080/api/v1/swagger-ui.html
-- ❤️ **Health Check**: http://localhost:8080/api/v1/auth/health
+- ❤️ **Health Check**: http://localhost:8080/api/v1/actuator/health
 
 ## 📱 **Application Features Demo**
 
@@ -176,6 +245,9 @@ curl -X POST http://localhost:8080/api/v1/auth/login \
 ```
 
 ### **2. Account Management**
+- On registration, the backend auto-creates a default CHECKING account and sends the user their generated account number by email.
+- You can still manage accounts via the API.
+
 ```bash
 # Create new account
 curl -X POST http://localhost:8080/api/v1/accounts \
@@ -193,14 +265,15 @@ curl -X GET http://localhost:8080/api/v1/accounts \
 ```
 
 ### **3. AI Customer Support**
+- Works out-of-the-box. If OPENAI_API_KEY is not set, responses come from a built-in fallback (non-AI) so the endpoint remains usable in development.
+
 ```bash
 # Ask AI support question
 curl -X POST http://localhost:8080/api/v1/customer-support/chat \
   -H "Authorization: Bearer YOUR_JWT_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
-    "message": "How do I transfer money between accounts?",
-    "category": "Transactions & Transfers"
+    "message": "How do I reset my password?"
   }'
 ```
 
@@ -242,9 +315,10 @@ app:
 
 ### **Frontend Configuration (.env)**
 ```bash
-REACT_APP_API_URL=http://localhost:8080/api/v1
-REACT_APP_APP_NAME=MelvinBank Zambia
-REACT_APP_VERSION=1.0.0
+# Frontend env (Vite)
+VITE_API_URL=http://localhost:8080/api/v1
+VITE_APP_NAME=MelvinBank Zambia
+VITE_APP_VERSION=1.0.0
 ```
 
 ## 🌍 **Deployment**
