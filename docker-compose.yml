@@ -1,0 +1,78 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: melvinbank-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: melvinbank_zambia
+      POSTGRES_USER: melvinbank_user
+      POSTGRES_PASSWORD: melvinbank_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - melvinbank-network
+
+  # Spring Boot Backend
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: melvinbank-backend
+    restart: unless-stopped
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - DATABASE_URL=jdbc:postgresql://postgres:5432/melvinbank_zambia
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USERNAME=melvinbank_user
+      - DB_PASSWORD=melvinbank_password
+      - JWT_SECRET=melvinbank-zambia-jwt-secret-key-2024-very-long-and-secure
+      - APP_CORS_ALLOWED_ORIGINS=http://localhost:3000,http://localhost:80
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    networks:
+      - melvinbank-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/v1/auth/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # React Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: http://localhost:8080/api/v1
+        VITE_APP_NAME: "MelvinBank Zambia"
+        VITE_APP_VERSION: 1.0.0
+    container_name: melvinbank-frontend
+    restart: unless-stopped
+    environment:
+      - REACT_APP_API_URL=http://localhost:8080/api/v1
+      - REACT_APP_APP_NAME=MelvinBank Zambia
+      - REACT_APP_VERSION=1.0.0
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - melvinbank-network
+
+
+networks:
+  melvinbank-network:
+    driver: bridge
+    name: melvinbank-network
+
+volumes:
+  postgres_data:
+    name: melvinbank-postgres-data

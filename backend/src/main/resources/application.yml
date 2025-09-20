@@ -1,0 +1,195 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /api/v1
+
+spring:
+  application:
+    name: melvinbank-zambia-backend
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/melvinbank_zambia
+    username: ${DB_USERNAME:melvinbank_user}
+    password: ${DB_PASSWORD:melvinbank_pass}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        jdbc:
+          time_zone: UTC
+
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:your_email@gmail.com}
+    password: ${MAIL_PASSWORD:your_app_password}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+  cache:
+    type: simple
+
+  devtools:
+    restart:
+      enabled: true
+
+# Custom application properties
+app:
+  jwt:
+    secret: ${JWT_SECRET:bankingHubSecretKeyThatIsVeryLongAndSecureForJWTTokenGeneration2024}
+    expiration: ${JWT_EXPIRATION:86400000} # 24 hours in milliseconds
+    refresh-expiration: ${JWT_REFRESH_EXPIRATION:604800000} # 7 days in milliseconds
+
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000,http://localhost:5173}
+    allowed-methods: GET,POST,PUT,DELETE,OPTIONS
+    allowed-headers: "*"
+    allow-credentials: true
+
+  security:
+    password-strength:
+      min-length: 8
+      require-uppercase: true
+      require-lowercase: true
+      require-digit: true
+      require-special-char: true
+
+  features:
+    two-factor-auth: ${ENABLE_2FA:true}
+    email-notifications: ${ENABLE_EMAIL_NOTIFICATIONS:true}
+
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY:your-openai-api-key-here}
+      model: gpt-3.5-turbo
+      temperature: 0.7
+      max-tokens: 500
+
+  bank:
+    name: "MelvinBank Zambia"
+    support-email: "melvinchibanda@gmail.com"
+    from-email: ${FROM_EMAIL:noreply@melvinbank-zambia.com}
+    website: "https://melvinbank-zambia.com"
+    account:
+      number-prefix: "MBZ"
+      initial-balance: 0.00
+
+# Management endpoints
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when_authorized
+
+# Logging
+logging:
+  level:
+    com.bankinghub.backend: DEBUG
+    org.springframework.security: DEBUG
+    org.hibernate.SQL: DEBUG
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+
+# SpringDoc OpenAPI
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+  show-actuator: true
+
+---
+# Development profile
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/banking_hub_dev
+    username: ${DB_USERNAME:banking_user}
+    password: ${DB_PASSWORD:banking_password}
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+
+logging:
+  level:
+    com.bankinghub.backend: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.security: DEBUG
+
+---
+# Production profile
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+  datasource:
+    url: ${DATABASE_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+
+logging:
+  level:
+    com.bankinghub.backend: INFO
+    root: WARN
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+---
+# Test profile
+spring:
+  config:
+    activate:
+      on-profile: test
+
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: password
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    database-platform: org.hibernate.dialect.H2Dialect
+    defer-datasource-initialization: true
+
+  sql:
+    init:
+      mode: always
+
+  h2:
+    console:
+      enabled: true
+
+logging:
+  level:
+    com.bankinghub.backend: DEBUG

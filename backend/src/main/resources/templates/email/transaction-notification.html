@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction Alert - MelvinBank Zambia</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            background: linear-gradient(135deg, #2E8B57, #228B22);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px 10px 0 0;
+            margin: -20px -20px 20px -20px;
+        }
+        .alert-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        .transaction-details {
+            background-color: #f8f9fa;
+            border-left: 4px solid #2E8B57;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .amount {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2E8B57;
+            text-align: center;
+            margin: 15px 0;
+        }
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            padding: 5px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .footer {
+            background-color: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            border-radius: 0 0 10px 10px;
+            margin: 20px -20px -20px -20px;
+            border-top: 1px solid #e9ecef;
+            font-size: 12px;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="alert-icon">🔔</div>
+            <h1>Transaction Alert</h1>
+            <p th:text="${bankName}">MelvinBank Zambia</p>
+        </div>
+
+        <div class="content">
+            <p>Hello <span th:text="${userName}">Customer</span>,</p>
+            
+            <p>A transaction has been processed on your account. Here are the details:</p>
+
+            <div class="amount" th:text="${amount}">ZMW 1,000.00</div>
+
+            <div class="transaction-details">
+                <div class="detail-row">
+                    <strong>Transaction Type:</strong>
+                    <span th:text="${transactionType}">Deposit</span>
+                </div>
+                <div class="detail-row">
+                    <strong>Account Number:</strong>
+                    <span th:text="${accountNumber}">MBZ1234567890</span>
+                </div>
+                <div class="detail-row">
+                    <strong>Description:</strong>
+                    <span th:text="${description}">Salary deposit</span>
+                </div>
+                <div class="detail-row">
+                    <strong>Date & Time:</strong>
+                    <span th:text="${transactionDate}">12/01/2024 10:30</span>
+                </div>
+                <div class="detail-row">
+                    <strong>New Balance:</strong>
+                    <span th:text="${newBalance}" style="color: #2E8B57; font-weight: bold;">ZMW 5,000.00</span>
+                </div>
+            </div>
+
+            <p><strong>Security Notice:</strong> If you did not authorize this transaction, please contact our support team immediately.</p>
+        </div>
+
+        <div class="footer">
+            <p><strong th:text="${bankName}">MelvinBank Zambia</strong></p>
+            <p>Support: <a th:href="'mailto:' + ${supportEmail}" th:text="${supportEmail}">melvinchibanda@gmail.com</a></p>
+            <p>This is an automated message. Please do not reply to this email.</p>
+        </div>
+    </div>
+</body>
+</html>

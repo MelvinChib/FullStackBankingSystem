@@ -1,0 +1,25 @@
+.DS_Store
+*.log
+*.pid
+
+# Node
+node_modules/
+frontend/build/
+frontend/.env
+
+# Java / Maven
+backend/target/
+*.iml
+.idea/
+
+# Docker
+**/.dockerignore
+
+# MacOS
+._*
+
+# Coverage and tests
+coverage/
+
+# Others
+.env
