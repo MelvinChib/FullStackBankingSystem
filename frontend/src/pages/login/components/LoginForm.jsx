@@ -58,40 +58,52 @@ const LoginForm = ({ onLogin, isLoading, error }) => {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-4">
-        <Input
-          label="Email Address"
-          type="email"
-          name="email"
-          value={formData?.email}
-          onChange={handleInputChange}
-          placeholder="Enter your email"
-          error={validationErrors?.email}
-          required
-          disabled={isLoading}
-          className="w-full"
-        />
-
-        <div className="relative">
+        <div>
           <Input
-            label="Password"
-            type={showPassword ? 'text' : 'password'}
-            name="password"
-            value={formData?.password}
+            label="Email Address"
+            type="email"
+            name="email"
+            value={formData?.email}
             onChange={handleInputChange}
-            placeholder="Enter your password"
-            error={validationErrors?.password}
+            placeholder="example@email.com"
+            error={validationErrors?.email}
             required
             disabled={isLoading}
-            className="w-full pr-12"
+            className="w-full"
           />
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-9 text-muted-foreground hover:text-foreground transition-colors"
-            disabled={isLoading}
-          >
-            <Icon name={showPassword ? 'EyeOff' : 'Eye'} size={20} />
-          </button>
+          <p className="mt-1 text-xs text-muted-foreground flex items-center gap-1">
+            <Icon name="Info" size={12} />
+            Enter a valid email address (e.g., user@domain.com)
+          </p>
+        </div>
+
+        <div>
+          <div className="relative">
+            <Input
+              label="Password"
+              type={showPassword ? 'text' : 'password'}
+              name="password"
+              value={formData?.password}
+              onChange={handleInputChange}
+              placeholder="Enter your password"
+              error={validationErrors?.password}
+              required
+              disabled={isLoading}
+              className="w-full pr-12"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-9 text-muted-foreground hover:text-foreground transition-colors"
+              disabled={isLoading}
+            >
+              <Icon name={showPassword ? 'EyeOff' : 'Eye'} size={20} />
+            </button>
+          </div>
+          <p className="mt-1 text-xs text-muted-foreground flex items-center gap-1">
+            <Icon name="Info" size={12} />
+            Password must be at least 6 characters long
+          </p>
         </div>
       </div>
       {error && (
