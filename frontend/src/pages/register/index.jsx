@@ -83,18 +83,109 @@ const AccountOpeningForm = () => {
     const { name, type } = e.target;
     const value = type === 'checkbox' ? e.target.checked : e.target.value;
     setForm((prev) => ({ ...prev, [name]: value }));
+    
+    // Clear field error on change
+    if (fieldErrors[name]) {
+      setFieldErrors(prev => ({ ...prev, [name]: '' }));
+    }
+    
+    // Real-time validation for specific fields
+    if (type !== 'checkbox' && value) {
+      const error = validateField(name, value);
+      if (error) {
+        setFieldErrors(prev => ({ ...prev, [name]: error }));
+      }
+    }
   };
 
   const handleSelect = (name, value) => setForm((prev) => ({ ...prev, [name]: value }));
 
+  const [fieldErrors, setFieldErrors] = useState({});
+
+  const validateField = (name, value) => {
+    switch (name) {
+      case 'firstName':
+      case 'lastName':
+        if (!value || value.trim().length < 2) return 'Must be at least 2 characters';
+        if (!/^[a-zA-Z\s'-]+$/.test(value)) return 'Only letters, spaces, hyphens, and apostrophes allowed';
+        break;
+      case 'email':
+        if (!value) return 'Email is required';
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return 'Invalid email format (e.g., user@example.com)';
+        break;
+      case 'phoneNumber':
+        if (!value) return 'Phone number is required';
+        if (!/^\+?[0-9\s-]{7,20}$/.test(value)) return 'Invalid phone format (e.g., +260 97 1234567)';
+        break;
+      case 'nationalId':
+        if (value && !/^[a-zA-Z0-9\/\s-]{5,20}$/.test(value)) return 'Invalid ID format';
+        break;
+      case 'password':
+        if (!value) return 'Password is required';
+        if (value.length < 8) return 'Must be at least 8 characters';
+        if (!/[A-Z]/.test(value)) return 'Must include uppercase letter';
+        if (!/[a-z]/.test(value)) return 'Must include lowercase letter';
+        if (!/[0-9]/.test(value)) return 'Must include a number';
+        if (!/[!@#$%^&*(),.?":{}|<>]/.test(value)) return 'Must include special character';
+        break;
+      case 'confirmPassword':
+        if (value !== form.password) return 'Passwords do not match';
+        break;
+      case 'addressLine1':
+        if (!value || value.trim().length < 5) return 'Address must be at least 5 characters';
+        break;
+      case 'city':
+        if (!value || value.trim().length < 2) return 'City name required';
+        break;
+      case 'postalCode':
+        if (value && !/^[0-9]{4,10}$/.test(value)) return 'Invalid postal code (4-10 digits)';
+        break;
+      case 'initialDeposit':
+        if (value && (isNaN(value) || parseFloat(value) < 0)) return 'Must be a positive number';
+        if (value && parseFloat(value) > 0 && parseFloat(value) < 100) return 'Minimum deposit is 100';
+        break;
+    }
+    return '';
+  };
+
   const validate = () => {
-    if (!form.firstName || !form.lastName) return 'Please enter your first and last name.';
-    if (!form.email || !/\S+@\S+\.\S+/.test(form.email)) return 'Please enter a valid email address.';
-    if (!form.phoneNumber || form.phoneNumber.length < 7) return 'Please enter a valid phone number.';
-    if (!form.password || form.password.length < 8) return 'Password must be at least 8 characters.';
-    if (form.password !== form.confirmPassword) return 'Passwords do not match.';
-    if (!form.addressLine1 || !form.city || !form.country) return 'Please complete your address (line 1, city, country).';
-    if (!form.acceptTerms || !form.acceptPrivacy) return 'You must accept the Terms and Privacy Policy to proceed.';
+    const errors = {};
+    
+    // Required fields
+    if (!form.firstName) errors.firstName = 'First name is required';
+    else if (validateField('firstName', form.firstName)) errors.firstName = validateField('firstName', form.firstName);
+    
+    if (!form.lastName) errors.lastName = 'Last name is required';
+    else if (validateField('lastName', form.lastName)) errors.lastName = validateField('lastName', form.lastName);
+    
+    const emailError = validateField('email', form.email);
+    if (emailError) errors.email = emailError;
+    
+    const phoneError = validateField('phoneNumber', form.phoneNumber);
+    if (phoneError) errors.phoneNumber = phoneError;
+    
+    const passwordError = validateField('password', form.password);
+    if (passwordError) errors.password = passwordError;
+    
+    const confirmError = validateField('confirmPassword', form.confirmPassword);
+    if (confirmError) errors.confirmPassword = confirmError;
+    
+    if (!form.addressLine1) errors.addressLine1 = 'Address is required';
+    else if (validateField('addressLine1', form.addressLine1)) errors.addressLine1 = validateField('addressLine1', form.addressLine1);
+    
+    if (!form.city) errors.city = 'City is required';
+    else if (validateField('city', form.city)) errors.city = validateField('city', form.city);
+    
+    if (!form.country) errors.country = 'Country is required';
+    
+    if (!form.acceptTerms) errors.acceptTerms = 'You must accept the Terms of Service';
+    if (!form.acceptPrivacy) errors.acceptPrivacy = 'You must accept the Privacy Policy';
+    
+    setFieldErrors(errors);
+    
+    if (Object.keys(errors).length > 0) {
+      return Object.values(errors)[0]; // Return first error
+    }
     return '';
   };
 
@@ -168,11 +259,11 @@ const AccountOpeningForm = () => {
               <h2 className="text-lg font-semibold">Personal Information</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input label="First Name" name="firstName" value={form.firstName} onChange={handleChange} required placeholder="John" description="Enter your legal first name" />
+              <Input label="First Name" name="firstName" value={form.firstName} onChange={handleChange} required placeholder="John" description="Enter your legal first name" error={fieldErrors.firstName} />
               <Input label="Middle Name (optional)" name="middleName" value={form.middleName} onChange={handleChange} placeholder="Michael" />
-              <Input label="Last Name" name="lastName" value={form.lastName} onChange={handleChange} required placeholder="Doe" description="Enter your legal last name" />
+              <Input label="Last Name" name="lastName" value={form.lastName} onChange={handleChange} required placeholder="Doe" description="Enter your legal last name" error={fieldErrors.lastName} />
               <Input label="Date of Birth" type="date" name="dateOfBirth" value={form.dateOfBirth} onChange={handleChange} description="Must be 18 years or older" />
-              <Input label="National ID / Passport" name="nationalId" value={form.nationalId} onChange={handleChange} placeholder="123456/78/9" description="Enter your NRC or passport number" />
+              <Input label="National ID / Passport" name="nationalId" value={form.nationalId} onChange={handleChange} placeholder="123456/78/9" description="Enter your NRC or passport number" error={fieldErrors.nationalId} />
             </div>
           </section>
 
@@ -185,8 +276,8 @@ const AccountOpeningForm = () => {
               <h2 className="text-lg font-semibold">Contact Details</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input label="Email Address" type="email" name="email" value={form.email} onChange={handleChange} required placeholder="john.doe@example.com" description="We'll send your account details here" />
-              <Input label="Mobile Number" name="phoneNumber" value={form.phoneNumber} onChange={handleChange} required placeholder="+260 97 1234567" description="Include country code (e.g., +260)" />
+              <Input label="Email Address" type="email" name="email" value={form.email} onChange={handleChange} required placeholder="john.doe@example.com" description="We'll send your account details here" error={fieldErrors.email} />
+              <Input label="Mobile Number" name="phoneNumber" value={form.phoneNumber} onChange={handleChange} required placeholder="+260 97 1234567" description="Include country code (e.g., +260)" error={fieldErrors.phoneNumber} />
             </div>
           </section>
 
@@ -199,11 +290,11 @@ const AccountOpeningForm = () => {
               <h2 className="text-lg font-semibold">Residential Address</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input label="Address Line 1" name="addressLine1" value={form.addressLine1} onChange={handleChange} required placeholder="123 Main Street" description="Street address or P.O. Box" />
+              <Input label="Address Line 1" name="addressLine1" value={form.addressLine1} onChange={handleChange} required placeholder="123 Main Street" description="Street address or P.O. Box" error={fieldErrors.addressLine1} />
               <Input label="Address Line 2 (optional)" name="addressLine2" value={form.addressLine2} onChange={handleChange} placeholder="Apt 4B" />
-              <Input label="City" name="city" value={form.city} onChange={handleChange} required placeholder="Lusaka" />
+              <Input label="City" name="city" value={form.city} onChange={handleChange} required placeholder="Lusaka" error={fieldErrors.city} />
               <Input label="Province / State" name="province" value={form.province} onChange={handleChange} placeholder="Lusaka Province" />
-              <Input label="Postal Code" name="postalCode" value={form.postalCode} onChange={handleChange} placeholder="10101" />
+              <Input label="Postal Code" name="postalCode" value={form.postalCode} onChange={handleChange} placeholder="10101" error={fieldErrors.postalCode} />
               <Input label="Country" name="country" value={form.country} onChange={handleChange} placeholder="Zambia" description="Full country name" />
             </div>
           </section>
@@ -231,7 +322,7 @@ const AccountOpeningForm = () => {
                 onChange={(val) => handleSelect('currency', val)}
                 required
               />
-              <Input label="Initial Deposit (optional)" type="number" name="initialDeposit" value={form.initialDeposit} onChange={handleChange} placeholder="1000" description="Minimum ZMW 100 recommended" />
+              <Input label="Initial Deposit (optional)" type="number" name="initialDeposit" value={form.initialDeposit} onChange={handleChange} placeholder="1000" description="Minimum ZMW 100 recommended" error={fieldErrors.initialDeposit} />
             </div>
           </section>
 
@@ -264,8 +355,8 @@ const AccountOpeningForm = () => {
               <h2 className="text-lg font-semibold">Security</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input label="Create Password" type="password" name="password" value={form.password} onChange={handleChange} required placeholder="••••••••" description="Min 8 chars: uppercase, lowercase, number, special char" />
-              <Input label="Confirm Password" type="password" name="confirmPassword" value={form.confirmPassword} onChange={handleChange} required placeholder="••••••••" description="Re-enter your password" />
+              <Input label="Create Password" type="password" name="password" value={form.password} onChange={handleChange} required placeholder="••••••••" description="Min 8 chars: uppercase, lowercase, number, special char" error={fieldErrors.password} />
+              <Input label="Confirm Password" type="password" name="confirmPassword" value={form.confirmPassword} onChange={handleChange} required placeholder="••••••••" description="Re-enter your password" error={fieldErrors.confirmPassword} />
             </div>
           </section>
 
