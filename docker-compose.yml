@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: melvinbank-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME:-melvinbank_zambia}
+      POSTGRES_USER: ${DB_USERNAME:-melvinbank_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-melvinbank_password}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - melvinbank-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-melvinbank_user}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: melvinbank-backend
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-prod}
+      DATABASE_URL: jdbc:postgresql://postgres:5432/${DB_NAME:-melvinbank_zambia}
+      DB_USERNAME: ${DB_USERNAME:-melvinbank_user}
+      DB_PASSWORD: ${DB_PASSWORD:-melvinbank_password}
+      JWT_SECRET: ${JWT_SECRET:-melvinbank-zambia-jwt-secret-key-2024-very-long-and-secure}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:5173,http://localhost:80}
+    ports:
+      - "${BACKEND_PORT:-8080}:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - melvinbank-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/v1/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:8080/api/v1}
+        VITE_APP_NAME: ${VITE_APP_NAME:-MelvinBank Zambia}
+    container_name: melvinbank-frontend
+    restart: unless-stopped
+    ports:
+      - "${FRONTEND_PORT:-5173}:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - melvinbank-network
+
+networks:
+  melvinbank-network:
+    driver: bridge
+
+volumes:
+  postgres_data:

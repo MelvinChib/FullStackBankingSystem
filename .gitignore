@@ -1,0 +1,50 @@
+# Environment files
+.env
+.env.local
+.env.*.local
+*.env
+!.env.example
+!.env.docker
+
+# Dependencies
+node_modules/
+target/
+.mvn/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+.DS_Store
+
+# Logs
+*.log
+logs/
+
+# Build outputs
+dist/
+build/
+*.class
+*.jar
+*.war
+
+# OS
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*~
+
+# Database
+*.db
+*.sqlite
+
+# Secrets
+secrets/
+credentials/
+*.pem
+*.key

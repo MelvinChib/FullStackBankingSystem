@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to MelvinBank Zambia</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            background: linear-gradient(135deg, #2E8B57, #228B22);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            border-radius: 10px 10px 0 0;
+            margin: -20px -20px 20px -20px;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+        .content {
+            padding: 20px 0;
+        }
+        .account-details {
+            background-color: #f8f9fa;
+            border: 2px solid #2E8B57;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .account-details h3 {
+            color: #2E8B57;
+            margin-top: 0;
+        }
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            padding: 8px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .detail-label {
+            font-weight: bold;
+            color: #495057;
+        }
+        .detail-value {
+            color: #2E8B57;
+            font-weight: bold;
+        }
+        .cta-button {
+            display: inline-block;
+            background-color: #2E8B57;
+            color: white;
+            padding: 12px 30px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        .footer {
+            background-color: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            border-radius: 0 0 10px 10px;
+            margin: 20px -20px -20px -20px;
+            border-top: 1px solid #e9ecef;
+        }
+        .footer p {
+            margin: 5px 0;
+            color: #6c757d;
+            font-size: 14px;
+        }
+        .support-info {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .support-info h4 {
+            color: #856404;
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 th:text="${bankName}">MelvinBank Zambia</h1>
+            <p>Your Trusted Banking Partner</p>
+        </div>
+
+        <div class="content">
+            <h2>Welcome <span th:text="${userName}">Customer</span>!</h2>
+            
+            <p>Congratulations! Your account with <strong th:text="${bankName}">MelvinBank Zambia</strong> has been successfully created. We're excited to have you as part of our banking family.</p>
+
+            <div class="account-details">
+                <h3>🎉 Your Account Details</h3>
+                <div class="detail-row">
+                    <span class="detail-label">Account Number:</span>
+                    <span class="detail-value" th:text="${accountNumber}">MBZ1234567890</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Account Type:</span>
+                    <span class="detail-value" th:text="${accountType}">Savings</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Account Name:</span>
+                    <span class="detail-value" th:text="${accountName}">My Savings Account</span>
+                </div>
+            </div>
+
+            <p>You can now log in to your online banking portal using your email address and password. Your account is ready for all banking services including:</p>
+
+            <ul>
+                <li>💳 View account balances and transaction history</li>
+                <li>💸 Transfer money between accounts</li>
+                <li>📊 Export account statements</li>
+                <li>💡 Set up budgets and financial goals</li>
+                <li>🤖 Access AI-powered customer support</li>
+                <li>📧 Receive real-time transaction alerts</li>
+            </ul>
+
+            <div style="text-align: center;">
+                <a href="#" th:href="${website}" class="cta-button">Access Your Account</a>
+            </div>
+
+            <div class="support-info">
+                <h4>🎯 Need Special Assistance?</h4>
+                <p>For personalized banking support and special inquiries, you can reach our dedicated banking specialist directly at: 
+                   <strong><a th:href="'mailto:' + ${supportEmail}" th:text="${supportEmail}">melvinchibanda@gmail.com</a></strong>
+                </p>
+                <p>We're here to ensure your banking experience is exceptional!</p>
+            </div>
+
+            <p>Thank you for choosing <span th:text="${bankName}">MelvinBank Zambia</span>. We look forward to serving your financial needs.</p>
+        </div>
+
+        <div class="footer">
+            <p><strong th:text="${bankName}">MelvinBank Zambia</strong></p>
+            <p>Email: <a th:href="'mailto:' + ${supportEmail}" th:text="${supportEmail}">melvinchibanda@gmail.com</a></p>
+            <p>Website: <a th:href="${website}" th:text="${website}">https://melvinbank-zambia.com</a></p>
+            <p>&copy; <span th:text="${currentYear}">2024</span> MelvinBank Zambia. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>
