@@ -11,14 +11,19 @@ import { defaultRolesForEmail, permissionsForRoles } from '../../services/permis
 
 // Demo credentials from environment variables
 const getDemoCredentials = () => {
-  const enableDemo = import.meta?.env?.VITE_ENABLE_DEMO === 'true';
-  if (!enableDemo) return null;
-  
-  return {
-    email: import.meta?.env?.VITE_DEMO_EMAIL,
-    password: import.meta?.env?.VITE_DEMO_PASSWORD,
-    twoFactorCode: import.meta?.env?.VITE_DEMO_2FA_CODE
-  };
+  try {
+    const enableDemo = import.meta?.env?.VITE_ENABLE_DEMO === 'true';
+    if (!enableDemo) return null;
+    
+    return {
+      email: import.meta?.env?.VITE_DEMO_EMAIL || '',
+      password: import.meta?.env?.VITE_DEMO_PASSWORD || '',
+      twoFactorCode: import.meta?.env?.VITE_DEMO_2FA_CODE || ''
+    };
+  } catch (err) {
+    console.error('Error loading demo credentials:', err);
+    return null;
+  }
 };
 
 const Login = () => {
@@ -29,10 +34,14 @@ const Login = () => {
   const [sessionTimeout, setSessionTimeout] = useState(null);
 
   useEffect(() => {
-    // Check for existing session
-    const existingSession = localStorage.getItem('bankingSession');
-    if (existingSession) {
-      navigate('/account-dashboard');
+    try {
+      // Check for existing session
+      const existingSession = localStorage.getItem('bankingSession');
+      if (existingSession) {
+        navigate('/account-dashboard');
+      }
+    } catch (err) {
+      console.error('Session check error:', err);
     }
 
     // Set up session timeout warning
@@ -231,24 +240,21 @@ const Login = () => {
               </div>
 
               {/* Demo Credentials Notice */}
-              {(() => {
-                const demoCreds = getDemoCredentials();
-                return demoCreds ? (
-                  <div className="mt-6 p-4 bg-primary/5 border border-primary/20 rounded-lg">
-                    <div className="flex items-start space-x-2">
-                      <Icon name="Info" size={16} className="text-primary mt-0.5" />
-                      <div className="text-sm">
-                        <p className="font-medium text-primary mb-1">Demo Credentials</p>
-                        <p className="text-muted-foreground text-xs">
-                          Email: {demoCreds.email}<br />
-                          Password: {demoCreds.password}<br />
-                          2FA Code: {demoCreds.twoFactorCode}
-                        </p>
-                      </div>
+              {import.meta?.env?.VITE_ENABLE_DEMO === 'true' && (
+                <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                  <div className="flex items-start space-x-2">
+                    <Icon name="Info" size={16} className="text-blue-600 mt-0.5" />
+                    <div className="text-sm">
+                      <p className="font-medium text-blue-900 mb-1">Demo Credentials</p>
+                      <p className="text-gray-700 text-xs">
+                        Email: {import.meta?.env?.VITE_DEMO_EMAIL || 'demo@swiftbank.com'}<br />
+                        Password: {import.meta?.env?.VITE_DEMO_PASSWORD || 'Demo123!'}<br />
+                        2FA Code: {import.meta?.env?.VITE_DEMO_2FA_CODE || '123456'}
+                      </p>
                     </div>
                   </div>
-                ) : null;
-              })()}
+                </div>
+              )}
             </div>
 
             {/* Right Column - Trust Signals & Security */}
