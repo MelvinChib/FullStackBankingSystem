@@ -231,25 +231,24 @@ const Login = () => {
               </div>
 
               {/* Demo Credentials Notice */}
-              <div className="mt-6 p-4 bg-primary/5 border border-primary/20 rounded-lg">
-                <div className="flex items-start space-x-2">
-                  <Icon name="Info" size={16} className="text-primary mt-0.5" />
-                  <div className="text-sm">
-                    <p className="font-medium text-primary mb-1">Demo Credentials</p>
-                    <p className="text-muted-foreground text-xs">
-                      {getDemoCredentials() ? (
-                        <>
-                          Email: {getDemoCredentials().email}<br />
-                          Password: {getDemoCredentials().password}<br />
-                          2FA Code: {getDemoCredentials().twoFactorCode}
-                        </>
-                      ) : (
-                        'Demo mode disabled'
-                      )}
-                    </p>
+              {(() => {
+                const demoCreds = getDemoCredentials();
+                return demoCreds ? (
+                  <div className="mt-6 p-4 bg-primary/5 border border-primary/20 rounded-lg">
+                    <div className="flex items-start space-x-2">
+                      <Icon name="Info" size={16} className="text-primary mt-0.5" />
+                      <div className="text-sm">
+                        <p className="font-medium text-primary mb-1">Demo Credentials</p>
+                        <p className="text-muted-foreground text-xs">
+                          Email: {demoCreds.email}<br />
+                          Password: {demoCreds.password}<br />
+                          2FA Code: {demoCreds.twoFactorCode}
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
+                ) : null;
+              })()}
             </div>
 
             {/* Right Column - Trust Signals & Security */}
