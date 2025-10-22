@@ -10,48 +10,62 @@ import AccountCard from './components/AccountCard';
 import RecentTransactions from './components/RecentTransactions';
 import QuickActions from './components/QuickActions';
 import FinancialInsights from './components/FinancialInsights';
+import ApiService from '../../services/api';
+import Auth from '../../services/auth';
 
 const AccountDashboard = () => {
   const navigate = useNavigate();
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [quickActionPanelOpen, setQuickActionPanelOpen] = useState(false);
+  const [accounts, setAccounts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Mock user data
-  const user = {
-    firstName: "John",
-    name: "John Smith",
-    email: "john.smith@email.com",
+  // Get user from session
+  const session = Auth.getSession();
+  const user = session?.user || {
+    firstName: "Demo",
+    name: "Demo User",
+    email: "demo@swiftbank.com",
     accountId: "ACC123456789"
   };
 
-  // Mock account data
-  const accounts = [
-    {
-      id: "1",
-      name: "Primary Checking",
-      type: "checking",
-      accountNumber: "1234567890",
-      balance: 2847.65,
-      lastActivity: "2 hours ago"
-    },
-    {
-      id: "2",
-      name: "High-Yield Savings",
-      type: "savings",
-      accountNumber: "0987654321",
-      balance: 15420.30,
-      lastActivity: "1 day ago"
-    },
-    {
-      id: "3",
-      name: "Rewards Credit Card",
-      type: "credit",
-      accountNumber: "4567890123",
-      balance: 1250.75,
-      creditLimit: 5000.00,
-      lastActivity: "3 hours ago"
-    }
-  ];
+  // Load accounts on mount
+  useEffect(() => {
+    const loadAccounts = async () => {
+      try {
+        setLoading(true);
+        const data = await ApiService.getUserAccounts();
+        setAccounts(data || []);
+        setError(null);
+      } catch (err) {
+        console.error('Failed to load accounts:', err);
+        setError('Failed to load accounts');
+        // Set fallback demo accounts
+        setAccounts([
+          {
+            id: "1",
+            name: "Primary Checking",
+            type: "checking",
+            accountNumber: "1234567890",
+            balance: 2847.65,
+            lastActivity: "2 hours ago"
+          },
+          {
+            id: "2",
+            name: "High-Yield Savings",
+            type: "savings",
+            accountNumber: "0987654321",
+            balance: 15420.30,
+            lastActivity: "1 day ago"
+          }
+        ]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadAccounts();
+  }, []);
 
   // Mock transaction data
   const recentTransactions = [
@@ -176,9 +190,14 @@ const AccountDashboard = () => {
 
   const handleRefreshData = async () => {
     setIsRefreshing(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    setIsRefreshing(false);
+    try {
+      const data = await ApiService.getUserAccounts();
+      setAccounts(data || []);
+    } catch (err) {
+      console.error('Failed to refresh:', err);
+    } finally {
+      setIsRefreshing(false);
+    }
   };
 
   const handleLogout = () => {
@@ -221,6 +240,17 @@ const AccountDashboard = () => {
   const handleAlertDismiss = (alertId) => {
     console.log('Alert dismissed:', alertId);
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading your dashboard...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
