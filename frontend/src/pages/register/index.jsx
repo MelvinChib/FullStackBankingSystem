@@ -168,11 +168,11 @@ const AccountOpeningForm = () => {
               <h2 className="text-lg font-semibold">Personal Information</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input label="First Name" name="firstName" value={form.firstName} onChange={handleChange} required />
-              <Input label="Middle Name (optional)" name="middleName" value={form.middleName} onChange={handleChange} />
-              <Input label="Last Name" name="lastName" value={form.lastName} onChange={handleChange} required />
-              <Input label="Date of Birth" type="date" name="dateOfBirth" value={form.dateOfBirth} onChange={handleChange} />
-              <Input label="National ID / Passport" name="nationalId" value={form.nationalId} onChange={handleChange} />
+              <Input label="First Name" name="firstName" value={form.firstName} onChange={handleChange} required placeholder="John" description="Enter your legal first name" />
+              <Input label="Middle Name (optional)" name="middleName" value={form.middleName} onChange={handleChange} placeholder="Michael" />
+              <Input label="Last Name" name="lastName" value={form.lastName} onChange={handleChange} required placeholder="Doe" description="Enter your legal last name" />
+              <Input label="Date of Birth" type="date" name="dateOfBirth" value={form.dateOfBirth} onChange={handleChange} description="Must be 18 years or older" />
+              <Input label="National ID / Passport" name="nationalId" value={form.nationalId} onChange={handleChange} placeholder="123456/78/9" description="Enter your NRC or passport number" />
             </div>
           </section>
 
@@ -185,8 +185,8 @@ const AccountOpeningForm = () => {
               <h2 className="text-lg font-semibold">Contact Details</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input label="Email Address" type="email" name="email" value={form.email} onChange={handleChange} required />
-              <Input label="Mobile Number" name="phoneNumber" value={form.phoneNumber} onChange={handleChange} required />
+              <Input label="Email Address" type="email" name="email" value={form.email} onChange={handleChange} required placeholder="john.doe@example.com" description="We'll send your account details here" />
+              <Input label="Mobile Number" name="phoneNumber" value={form.phoneNumber} onChange={handleChange} required placeholder="+260 97 1234567" description="Include country code (e.g., +260)" />
             </div>
           </section>
 
@@ -199,12 +199,12 @@ const AccountOpeningForm = () => {
               <h2 className="text-lg font-semibold">Residential Address</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input label="Address Line 1" name="addressLine1" value={form.addressLine1} onChange={handleChange} required />
-              <Input label="Address Line 2 (optional)" name="addressLine2" value={form.addressLine2} onChange={handleChange} />
-              <Input label="City" name="city" value={form.city} onChange={handleChange} required />
-              <Input label="Province / State" name="province" value={form.province} onChange={handleChange} />
-              <Input label="Postal Code" name="postalCode" value={form.postalCode} onChange={handleChange} />
-              <Input label="Country" name="country" value={form.country} onChange={handleChange} />
+              <Input label="Address Line 1" name="addressLine1" value={form.addressLine1} onChange={handleChange} required placeholder="123 Main Street" description="Street address or P.O. Box" />
+              <Input label="Address Line 2 (optional)" name="addressLine2" value={form.addressLine2} onChange={handleChange} placeholder="Apt 4B" />
+              <Input label="City" name="city" value={form.city} onChange={handleChange} required placeholder="Lusaka" />
+              <Input label="Province / State" name="province" value={form.province} onChange={handleChange} placeholder="Lusaka Province" />
+              <Input label="Postal Code" name="postalCode" value={form.postalCode} onChange={handleChange} placeholder="10101" />
+              <Input label="Country" name="country" value={form.country} onChange={handleChange} placeholder="Zambia" description="Full country name" />
             </div>
           </section>
 
@@ -231,7 +231,7 @@ const AccountOpeningForm = () => {
                 onChange={(val) => handleSelect('currency', val)}
                 required
               />
-              <Input label="Initial Deposit (optional)" type="number" name="initialDeposit" value={form.initialDeposit} onChange={handleChange} />
+              <Input label="Initial Deposit (optional)" type="number" name="initialDeposit" value={form.initialDeposit} onChange={handleChange} placeholder="1000" description="Minimum ZMW 100 recommended" />
             </div>
           </section>
 
@@ -245,7 +245,7 @@ const AccountOpeningForm = () => {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Select label="Employment Status" value={form.employmentStatus} options={employmentOptions} onChange={(v) => handleSelect('employmentStatus', v)} />
-              <Input label="Employer / Business Name" name="employerName" value={form.employerName} onChange={handleChange} />
+              <Input label="Employer / Business Name" name="employerName" value={form.employerName} onChange={handleChange} placeholder="ABC Company Ltd" description="Leave blank if unemployed" />
               <Select label="Monthly Income Range" value={form.monthlyIncomeRange} options={incomeOptions} onChange={(v) => handleSelect('monthlyIncomeRange', v)} />
               <Select label="Source of Funds" value={form.sourceOfFunds} options={sourceOfFundsOptions} onChange={(v) => handleSelect('sourceOfFunds', v)} />
               <div className="col-span-1 md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -264,8 +264,8 @@ const AccountOpeningForm = () => {
               <h2 className="text-lg font-semibold">Security</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input label="Create Password" type="password" name="password" value={form.password} onChange={handleChange} required description="Minimum 8 characters, include upper, lower, digit, and special character." />
-              <Input label="Confirm Password" type="password" name="confirmPassword" value={form.confirmPassword} onChange={handleChange} required />
+              <Input label="Create Password" type="password" name="password" value={form.password} onChange={handleChange} required placeholder="••••••••" description="Min 8 chars: uppercase, lowercase, number, special char" />
+              <Input label="Confirm Password" type="password" name="confirmPassword" value={form.confirmPassword} onChange={handleChange} required placeholder="••••••••" description="Re-enter your password" />
             </div>
           </section>
 
