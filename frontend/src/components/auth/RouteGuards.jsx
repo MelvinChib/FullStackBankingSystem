@@ -26,14 +26,27 @@ export const RoleRoute = ({ roles = [], children }) => {
 export const PermissionRoute = ({ permission, children }) => {
   const location = useLocation();
   const authed = Auth.isAuthenticated();
-  if (!authed) return <Navigate to="/login" state={{ from: location }} replace />;
-  if (!permission) return children;
+  
+  if (!authed) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+  
+  // If no permission required, allow access
+  if (!permission) {
+    return children;
+  }
+  
   const session = Auth.getSession();
   const perms = session?.user?.permissions || [];
-  if (!perms.includes(permission)) {
-    return <Navigate to="/account-dashboard" replace />;
+  
+  // In demo mode, allow all permissions
+  const enableDemo = import.meta?.env?.VITE_ENABLE_DEMO === 'true';
+  if (enableDemo || perms.includes(permission)) {
+    return children;
   }
-  return children;
+  
+  // Redirect to dashboard if no permission
+  return <Navigate to="/account-dashboard" replace />;
 };
 
 export const PublicOnlyRoute = ({ children }) => {
