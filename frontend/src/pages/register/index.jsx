@@ -250,59 +250,41 @@ const AccountOpeningForm = () => {
           </div>
 
           {error && (
-            <div className="relative overflow-hidden rounded-xl border-2 border-red-400 bg-gradient-to-r from-red-50 to-red-100 p-5 shadow-lg animate-shake">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-red-200 rounded-full -mr-16 -mt-16 opacity-50"></div>
-              <div className="relative flex items-start space-x-4">
-                <div className="flex-shrink-0 w-10 h-10 bg-red-500 rounded-full flex items-center justify-center shadow-md">
-                  <Icon name="AlertCircle" size={22} className="text-white" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-base font-bold text-red-800 mb-1">⚠️ Oops! Something went wrong</h3>
-                  <p className="text-sm text-red-700 leading-relaxed">{error}</p>
+            <div className="border-l-4 border-red-600 bg-red-50 p-4">
+              <div className="flex items-start">
+                <Icon name="XCircle" size={20} className="text-red-600 mt-0.5 flex-shrink-0" />
+                <div className="ml-3">
+                  <h3 className="text-sm font-semibold text-red-800">Error</h3>
+                  <p className="text-sm text-red-700 mt-1">{error}</p>
                 </div>
               </div>
             </div>
           )}
           
           {Object.keys(fieldErrors).length > 0 && !error && (
-            <div className="relative overflow-hidden rounded-xl border-2 border-amber-400 bg-gradient-to-r from-amber-50 to-yellow-100 p-5 shadow-lg">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-amber-200 rounded-full -mr-16 -mt-16 opacity-50"></div>
-              <div className="relative flex items-start space-x-4">
-                <div className="flex-shrink-0 w-10 h-10 bg-amber-500 rounded-full flex items-center justify-center shadow-md">
-                  <Icon name="AlertTriangle" size={22} className="text-white" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-base font-bold text-amber-900 mb-3">📝 Please review the following:</h3>
-                  <div className="space-y-2">
+            <div className="border-l-4 border-yellow-600 bg-yellow-50 p-4">
+              <div className="flex items-start">
+                <Icon name="AlertCircle" size={20} className="text-yellow-600 mt-0.5 flex-shrink-0" />
+                <div className="ml-3 flex-1">
+                  <h3 className="text-sm font-semibold text-yellow-800">Please correct the following:</h3>
+                  <ul className="mt-2 space-y-1 text-sm text-yellow-700">
                     {Object.entries(fieldErrors).map(([field, err]) => err && (
-                      <div key={field} className="flex items-start space-x-2 bg-white/60 rounded-lg p-2">
-                        <Icon name="ChevronRight" size={16} className="text-amber-600 mt-0.5 flex-shrink-0" />
-                        <p className="text-sm text-amber-800">
-                          <span className="font-semibold">{field.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}:</span> {err}
-                        </p>
-                      </div>
+                      <li key={field}>
+                        {field.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}: {err}
+                      </li>
                     ))}
-                  </div>
+                  </ul>
                 </div>
               </div>
             </div>
           )}
           {success && (
-            <div className="relative overflow-hidden rounded-xl border-2 border-green-400 bg-gradient-to-r from-green-50 to-emerald-100 p-5 shadow-lg animate-bounce-in">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-green-200 rounded-full -mr-16 -mt-16 opacity-50"></div>
-              <div className="relative flex items-start space-x-4">
-                <div className="flex-shrink-0 w-12 h-12 bg-green-500 rounded-full flex items-center justify-center shadow-md animate-pulse">
-                  <Icon name="CheckCircle2" size={26} className="text-white" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-lg font-bold text-green-800 mb-1">🎉 Success!</h3>
-                  <p className="text-sm text-green-700 leading-relaxed">{success}</p>
-                  <div className="mt-3 flex items-center space-x-2 text-xs text-green-600">
-                    <div className="animate-spin">
-                      <Icon name="Loader2" size={14} />
-                    </div>
-                    <span>Preparing your account...</span>
-                  </div>
+            <div className="border-l-4 border-green-600 bg-green-50 p-4">
+              <div className="flex items-start">
+                <Icon name="CheckCircle" size={20} className="text-green-600 mt-0.5 flex-shrink-0" />
+                <div className="ml-3">
+                  <h3 className="text-sm font-semibold text-green-800">Success</h3>
+                  <p className="text-sm text-green-700 mt-1">{success}</p>
                 </div>
               </div>
             </div>

@@ -66,24 +66,17 @@ const Input = React.forwardRef(({
                 </label>
             )}
 
-            <div className="relative">
-                <input
-                    type={type}
-                    className={cn(
-                        baseInputClasses,
-                        error && "border-red-500 border-2 focus-visible:ring-red-500 bg-red-50",
-                        className
-                    )}
-                    ref={ref}
-                    id={inputId}
-                    {...props}
-                />
-                {error && (
-                    <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                        <Icon name="AlertCircle" size={18} className="text-red-500" />
-                    </div>
+            <input
+                type={type}
+                className={cn(
+                    baseInputClasses,
+                    error && "border-red-600 focus-visible:ring-red-600",
+                    className
                 )}
-            </div>
+                ref={ref}
+                id={inputId}
+                {...props}
+            />
 
             {description && !error && (
                 <p className="text-sm text-muted-foreground">
@@ -92,15 +85,10 @@ const Input = React.forwardRef(({
             )}
 
             {error && (
-                <div className="flex items-start gap-2 p-2 bg-red-50 border border-red-200 rounded-md">
-                    <Icon name="AlertCircle" size={16} className="text-red-500 mt-0.5 flex-shrink-0" />
-                    <div className="flex-1">
-                        <p className="text-sm font-medium text-red-700">{error}</p>
-                        {description && (
-                            <p className="text-xs text-red-600 mt-1">{description}</p>
-                        )}
-                    </div>
-                </div>
+                <p className="text-sm text-red-600 flex items-start gap-1">
+                    <Icon name="XCircle" size={14} className="mt-0.5 flex-shrink-0" />
+                    <span>{error}</span>
+                </p>
             )}
         </div>
     );
