@@ -65,14 +65,27 @@ const Login = () => {
         password: formData?.password,
       });
 
-      // If your backend returns a flag for 2FA, handle here
-      if (resp?.requiresTwoFactor) {
-        setCurrentStep('2fa');
+      // Backend returns: { accessToken, expirationTime, user }
+      if (resp?.accessToken) {
+        // Store token
+        localStorage.setItem('authToken', resp.accessToken);
+        
+        // If backend requires 2FA
+        if (resp?.requiresTwoFactor) {
+          setCurrentStep('2fa');
+        } else {
+          // Use roles/permissions from backend
+          const roles = resp?.user?.role ? [resp.user.role] : defaultRolesForEmail(formData?.email);
+          const permissions = permissionsForRoles(roles);
+          handleLoginSuccess({ 
+            email: formData?.email, 
+            roles, 
+            permissions, 
+            backendUser: resp?.user 
+          });
+        }
       } else {
-        // Use roles/permissions from backend if provided; otherwise derive defaults
-        const roles = resp?.user?.roles || defaultRolesForEmail(formData?.email);
-        const permissions = resp?.user?.permissions || permissionsForRoles(roles);
-        handleLoginSuccess({ email: formData?.email, roles, permissions, backendUser: resp?.user });
+        throw new Error('Invalid response from server');
       }
     } catch (err) {
       // For demo purposes, if backend is not available and user enters demo creds, allow demo login

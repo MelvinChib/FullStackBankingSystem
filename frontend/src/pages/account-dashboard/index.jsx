@@ -36,7 +36,17 @@ const AccountDashboard = () => {
       try {
         setLoading(true);
         const data = await ApiService.getUserAccounts();
-        setAccounts(data || []);
+        // Map backend response to frontend format
+        const mappedAccounts = (data || []).map(acc => ({
+          id: acc.id?.toString(),
+          name: acc.accountName || acc.name || `${acc.accountType} Account`,
+          type: (acc.accountType || 'CHECKING').toLowerCase(),
+          accountNumber: acc.accountNumber,
+          balance: acc.balance || 0,
+          creditLimit: acc.creditLimit,
+          lastActivity: acc.lastActivity || 'Recently'
+        }));
+        setAccounts(mappedAccounts);
         setError(null);
       } catch (err) {
         console.error('Failed to load accounts:', err);
