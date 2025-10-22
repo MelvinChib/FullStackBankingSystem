@@ -115,11 +115,58 @@ class ApiService {
   }
 
   async getUserAccounts() {
-    return this.apiCall('/accounts');
+    try {
+      return await this.apiCall('/accounts');
+    } catch (err) {
+      const enableDemo = import.meta?.env?.VITE_ENABLE_DEMO === 'true';
+      if (enableDemo && this.isAuthenticated()) {
+        return [
+          {
+            id: 1,
+            accountNumber: 'SWB1234567890',
+            accountType: 'CHECKING',
+            accountName: 'Main Checking',
+            balance: 5420.50,
+            currency: 'USD',
+            status: 'ACTIVE'
+          },
+          {
+            id: 2,
+            accountNumber: 'SWB0987654321',
+            accountType: 'SAVINGS',
+            accountName: 'Savings Account',
+            balance: 12500.00,
+            currency: 'USD',
+            status: 'ACTIVE'
+          }
+        ];
+      }
+      throw err;
+    }
   }
 
   async getAccountById(accountId) {
-    return this.apiCall(`/accounts/${accountId}`);
+    try {
+      return await this.apiCall(`/accounts/${accountId}`);
+    } catch (err) {
+      const enableDemo = import.meta?.env?.VITE_ENABLE_DEMO === 'true';
+      if (enableDemo && this.isAuthenticated()) {
+        return {
+          id: accountId,
+          accountNumber: `SWB${accountId}234567890`,
+          accountType: 'CHECKING',
+          accountName: 'Demo Account',
+          balance: 5420.50,
+          currency: 'USD',
+          status: 'ACTIVE',
+          transactions: [
+            { id: 1, date: new Date().toISOString(), description: 'Demo Transaction 1', amount: -50.00, type: 'DEBIT' },
+            { id: 2, date: new Date().toISOString(), description: 'Demo Transaction 2', amount: 100.00, type: 'CREDIT' }
+          ]
+        };
+      }
+      throw err;
+    }
   }
 
   async updateAccount(accountId, accountData) {
