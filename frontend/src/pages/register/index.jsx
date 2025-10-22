@@ -238,9 +238,26 @@ const AccountOpeningForm = () => {
           </div>
 
           {error && (
-            <div className="flex items-center space-x-2 p-3 bg-error/10 border border-error/20 rounded-lg text-error">
-              <Icon name="AlertCircle" size={16} />
-              <span className="text-sm">{error}</span>
+            <div className="flex items-start space-x-3 p-4 bg-red-50 border-2 border-red-500 rounded-lg">
+              <Icon name="AlertCircle" size={20} className="text-red-500 flex-shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <h3 className="text-sm font-semibold text-red-700 mb-1">Please fix the following errors:</h3>
+                <p className="text-sm text-red-600">{error}</p>
+              </div>
+            </div>
+          )}
+          
+          {Object.keys(fieldErrors).length > 0 && !error && (
+            <div className="flex items-start space-x-3 p-4 bg-red-50 border-2 border-red-500 rounded-lg">
+              <Icon name="AlertCircle" size={20} className="text-red-500 flex-shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <h3 className="text-sm font-semibold text-red-700 mb-2">Please fix the following errors:</h3>
+                <ul className="list-disc list-inside space-y-1 text-sm text-red-600">
+                  {Object.entries(fieldErrors).map(([field, err]) => err && (
+                    <li key={field}>{field.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}: {err}</li>
+                  ))}
+                </ul>
+              </div>
             </div>
           )}
           {success && (
