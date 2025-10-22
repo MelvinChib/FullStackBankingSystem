@@ -98,7 +98,16 @@ class ApiService {
   }
 
   async getCurrentUser() {
-    return this.apiCall('/auth/me');
+    try {
+      return await this.apiCall('/auth/me');
+    } catch (err) {
+      const enableDemo = import.meta?.env?.VITE_ENABLE_DEMO === 'true';
+      if (enableDemo && this.isAuthenticated()) {
+        const user = this.getCurrentUserData();
+        return user || { id: 1, name: 'Demo User', email: 'demo@swiftbank.com' };
+      }
+      throw err;
+    }
   }
 
   logout() {
@@ -108,10 +117,25 @@ class ApiService {
 
   // Account Management APIs
   async createAccount(accountData) {
-    return this.apiCall('/accounts', {
-      method: 'POST',
-      body: JSON.stringify(accountData)
-    });
+    try {
+      return await this.apiCall('/accounts', {
+        method: 'POST',
+        body: JSON.stringify(accountData)
+      });
+    } catch (err) {
+      const enableDemo = import.meta?.env?.VITE_ENABLE_DEMO === 'true';
+      if (enableDemo && this.isAuthenticated()) {
+        return {
+          id: Math.floor(Math.random() * 1000),
+          accountNumber: `SWB${Math.random().toString().slice(2, 12)}`,
+          ...accountData,
+          balance: accountData.initialBalance || 0,
+          status: 'ACTIVE',
+          createdAt: new Date().toISOString()
+        };
+      }
+      throw err;
+    }
   }
 
   async getUserAccounts() {
@@ -170,16 +194,32 @@ class ApiService {
   }
 
   async updateAccount(accountId, accountData) {
-    return this.apiCall(`/accounts/${accountId}`, {
-      method: 'PUT',
-      body: JSON.stringify(accountData)
-    });
+    try {
+      return await this.apiCall(`/accounts/${accountId}`, {
+        method: 'PUT',
+        body: JSON.stringify(accountData)
+      });
+    } catch (err) {
+      const enableDemo = import.meta?.env?.VITE_ENABLE_DEMO === 'true';
+      if (enableDemo && this.isAuthenticated()) {
+        return { id: accountId, ...accountData, updatedAt: new Date().toISOString() };
+      }
+      throw err;
+    }
   }
 
   async deleteAccount(accountId) {
-    return this.apiCall(`/accounts/${accountId}`, {
-      method: 'DELETE'
-    });
+    try {
+      return await this.apiCall(`/accounts/${accountId}`, {
+        method: 'DELETE'
+      });
+    } catch (err) {
+      const enableDemo = import.meta?.env?.VITE_ENABLE_DEMO === 'true';
+      if (enableDemo && this.isAuthenticated()) {
+        return { success: true, message: 'Account deleted successfully' };
+      }
+      throw err;
+    }
   }
 
   // Statement Export APIs
@@ -233,18 +273,48 @@ class ApiService {
 
   // Customer Support APIs
   async sendSupportMessage(messageData) {
-    return this.apiCall('/customer-support/chat', {
-      method: 'POST',
-      body: JSON.stringify(messageData)
-    });
+    try {
+      return await this.apiCall('/customer-support/chat', {
+        method: 'POST',
+        body: JSON.stringify(messageData)
+      });
+    } catch (err) {
+      const enableDemo = import.meta?.env?.VITE_ENABLE_DEMO === 'true';
+      if (enableDemo && this.isAuthenticated()) {
+        return {
+          response: 'Thank you for your message. This is a demo response. In production, our AI assistant would help you with your banking needs.',
+          timestamp: new Date().toISOString()
+        };
+      }
+      throw err;
+    }
   }
 
   async getSupportCategories() {
-    return this.apiCall('/customer-support/categories');
+    try {
+      return await this.apiCall('/customer-support/categories');
+    } catch (err) {
+      const enableDemo = import.meta?.env?.VITE_ENABLE_DEMO === 'true';
+      if (enableDemo && this.isAuthenticated()) {
+        return ['Account', 'Transactions', 'Cards', 'Loans', 'Technical Support'];
+      }
+      throw err;
+    }
   }
 
   async getQuickHelpTopics() {
-    return this.apiCall('/customer-support/quick-help');
+    try {
+      return await this.apiCall('/customer-support/quick-help');
+    } catch (err) {
+      const enableDemo = import.meta?.env?.VITE_ENABLE_DEMO === 'true';
+      if (enableDemo && this.isAuthenticated()) {
+        return [
+          { id: 1, question: 'How do I reset my password?', answer: 'Demo answer' },
+          { id: 2, question: 'How do I transfer money?', answer: 'Demo answer' }
+        ];
+      }
+      throw err;
+    }
   }
 
   // Mobile Money APIs
