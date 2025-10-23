@@ -240,21 +240,18 @@ const Login = () => {
               </div>
 
               {/* Demo Credentials Notice */}
-              {import.meta?.env?.VITE_ENABLE_DEMO === 'true' && (
-                <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                  <div className="flex items-start space-x-2">
-                    <Icon name="Info" size={16} className="text-blue-600 mt-0.5" />
-                    <div className="text-sm">
-                      <p className="font-medium text-blue-900 mb-1">Demo Credentials</p>
-                      <p className="text-gray-700 text-xs">
-                        Email: {import.meta?.env?.VITE_DEMO_EMAIL || 'demo@swiftbank.com'}<br />
-                        Password: {import.meta?.env?.VITE_DEMO_PASSWORD || 'Demo123!'}<br />
-                        2FA Code: {import.meta?.env?.VITE_DEMO_2FA_CODE || '123456'}
-                      </p>
-                    </div>
+              <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <div className="flex items-start space-x-2">
+                  <div className="text-sm">
+                    <p className="font-medium text-blue-900 mb-1">Demo Credentials</p>
+                    <p className="text-gray-700 text-xs">
+                      Email: demo@swiftbank.com<br />
+                      Password: Demo123!<br />
+                      2FA Code: 123456
+                    </p>
                   </div>
                 </div>
-              )}
+              </div>
             </div>
 
             {/* Right Column - Trust Signals & Security */}
