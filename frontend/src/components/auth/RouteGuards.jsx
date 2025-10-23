@@ -5,7 +5,10 @@ import Auth from '../../services/auth';
 export const ProtectedRoute = ({ children }) => {
   const location = useLocation();
   const authed = Auth.isAuthenticated();
+  
   if (!authed) {
+    // Clear any stale data
+    Auth.logout();
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
   return children;
@@ -28,6 +31,8 @@ export const PermissionRoute = ({ permission, children }) => {
   const authed = Auth.isAuthenticated();
   
   if (!authed) {
+    // Clear any stale data
+    Auth.logout();
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
   
@@ -45,8 +50,9 @@ export const PermissionRoute = ({ permission, children }) => {
     return children;
   }
   
-  // Redirect to dashboard if no permission
-  return <Navigate to="/account-dashboard" replace />;
+  // Redirect to login if no permission
+  Auth.logout();
+  return <Navigate to="/login" replace />;
 };
 
 export const PublicOnlyRoute = ({ children }) => {

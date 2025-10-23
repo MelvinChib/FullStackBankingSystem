@@ -35,7 +35,7 @@ done
 # Start Frontend
 echo "🚀 Starting Frontend (React + Vite)..."
 cd frontend
-npm run dev > ../frontend.log 2>&1 &
+npm start > ../frontend.log 2>&1 &
 FRONTEND_PID=$!
 echo "   Frontend PID: $FRONTEND_PID"
 cd ..
