@@ -11,6 +11,18 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+/**
+ * Transfer entity representing money transfers between accounts.
+ * <p>
+ * This entity stores transfer information including amount, status, fees,
+ * and supports internal transfers (between user accounts), external transfers
+ * (to other banks), and person-to-person transfers.
+ * </p>
+ * 
+ * @author Melvin Musonda Chibanda
+ * @version 2.0.0
+ * @since 1.0.0
+ */
 @Entity
 @Table(name = "transfers")
 @Data
@@ -80,13 +92,31 @@ public class Transfer {
     @Column(length = 100)
     private String externalAccountHolderName;
 
+    /**
+     * Transfer status enumeration.
+     */
     public enum TransferStatus {
-        PENDING, PROCESSING, COMPLETED, FAILED, CANCELLED
+        /** Transfer is pending */
+        PENDING,
+        /** Transfer is being processed */
+        PROCESSING,
+        /** Transfer completed successfully */
+        COMPLETED,
+        /** Transfer failed */
+        FAILED,
+        /** Transfer was cancelled */
+        CANCELLED
     }
 
+    /**
+     * Transfer type enumeration.
+     */
     public enum TransferType {
-        INTERNAL,     // Between user's own accounts
-        EXTERNAL,     // To external bank account
-        P2P          // Person to person
+        /** Transfer between user's own accounts */
+        INTERNAL,
+        /** Transfer to external bank account */
+        EXTERNAL,
+        /** Person-to-person transfer */
+        P2P
     }
 }

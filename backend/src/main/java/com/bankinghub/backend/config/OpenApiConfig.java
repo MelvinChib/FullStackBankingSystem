@@ -10,6 +10,18 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.annotations.servers.Server;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * OpenAPI/Swagger configuration for API documentation.
+ * <p>
+ * This configuration class sets up Swagger UI documentation for the MelvinBank API,
+ * including API information, server URLs, and JWT bearer authentication scheme.
+ * Access the Swagger UI at: http://localhost:8080/swagger-ui.html
+ * </p>
+ * 
+ * @author Melvin Musonda Chibanda
+ * @version 2.0.0
+ * @since 1.0.0
+ */
 @Configuration
 @OpenAPIDefinition(
     info = @Info(

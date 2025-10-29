@@ -12,6 +12,17 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+/**
+ * Bill entity representing a bill payment.
+ * <p>
+ * This entity stores bill information including payee details, amount, due dates,
+ * and supports recurring bills with auto-pay functionality.
+ * </p>
+ * 
+ * @author Melvin Musonda Chibanda
+ * @version 2.0.0
+ * @since 1.0.0
+ */
 @Entity
 @Table(name = "bills")
 @Data
@@ -76,11 +87,33 @@ public class Bill {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    /**
+     * Bill status enumeration.
+     */
     public enum BillStatus {
-        PENDING, PAID, OVERDUE, CANCELLED, SCHEDULED
+        /** Bill is pending payment */
+        PENDING,
+        /** Bill has been paid */
+        PAID,
+        /** Bill payment is overdue */
+        OVERDUE,
+        /** Bill has been cancelled */
+        CANCELLED,
+        /** Bill payment is scheduled */
+        SCHEDULED
     }
 
+    /**
+     * Recurrence frequency enumeration for recurring bills.
+     */
     public enum RecurrenceFrequency {
-        WEEKLY, MONTHLY, QUARTERLY, ANNUALLY
+        /** Bill recurs weekly */
+        WEEKLY,
+        /** Bill recurs monthly */
+        MONTHLY,
+        /** Bill recurs quarterly */
+        QUARTERLY,
+        /** Bill recurs annually */
+        ANNUALLY
     }
 }

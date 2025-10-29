@@ -12,6 +12,18 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+/**
+ * Budget entity representing a user's budget for expense tracking.
+ * <p>
+ * This entity stores budget information including limits, spent amounts,
+ * and alert thresholds. Provides methods to calculate remaining budget,
+ * spent percentage, and alert conditions.
+ * </p>
+ * 
+ * @author Melvin Musonda Chibanda
+ * @version 2.0.0
+ * @since 1.0.0
+ */
 @Entity
 @Table(name = "budgets")
 @Data
@@ -78,14 +90,34 @@ public class Budget {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    /**
+     * Budget period enumeration.
+     */
     public enum BudgetPeriod {
-        WEEKLY, MONTHLY, QUARTERLY, YEARLY
+        /** Weekly budget period */
+        WEEKLY,
+        /** Monthly budget period */
+        MONTHLY,
+        /** Quarterly budget period */
+        QUARTERLY,
+        /** Yearly budget period */
+        YEARLY
     }
 
+    /**
+     * Calculates the remaining budget amount.
+     * 
+     * @return remaining budget (limit - spent)
+     */
     public BigDecimal getRemainingBudget() {
         return budgetLimit.subtract(currentSpent);
     }
 
+    /**
+     * Calculates the percentage of budget spent.
+     * 
+     * @return spent percentage (0-100)
+     */
     public BigDecimal getSpentPercentage() {
         if (budgetLimit.compareTo(BigDecimal.ZERO) == 0) {
             return BigDecimal.ZERO;
@@ -94,10 +126,20 @@ public class Budget {
                 .multiply(new BigDecimal("100"));
     }
 
+    /**
+     * Checks if the budget has been exceeded.
+     * 
+     * @return true if spent amount exceeds budget limit
+     */
     public boolean isOverBudget() {
         return currentSpent.compareTo(budgetLimit) > 0;
     }
 
+    /**
+     * Checks if an alert should be triggered based on threshold.
+     * 
+     * @return true if alerts are enabled and threshold is reached
+     */
     public boolean shouldAlert() {
         return alertEnabled && getSpentPercentage().compareTo(alertThreshold) >= 0;
     }
